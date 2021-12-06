@@ -23,7 +23,6 @@ public class validateUnitCePingResut implements InterruptListenerInterface {
 		HashMap<String, Object> cpitemmap = new HashMap();
 		if (ceitemlist != null && !ceitemlist.isEmpty()) {
 			for (int i = 0; i < ceitemlist.size(); i++) {
-//				JSONObject orderItem = new JSONObject();
 				BO ceitembo = ceitemlist.get(i);
 				String ID = objToStr(ceitembo.get("ID"));
 				String CEPINGTYPE = objToStr(ceitembo.get("CEPINGTYPE"));
