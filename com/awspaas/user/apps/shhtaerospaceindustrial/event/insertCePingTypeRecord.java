@@ -13,8 +13,6 @@ import com.actionsoft.bpms.commons.database.ColumnMapRowMapper;
 import com.actionsoft.bpms.util.DBSql;
 import com.actionsoft.sdk.local.SDK;
 import com.actionsoft.sdk.local.api.BOAPI;
-import com.awspaas.user.apps.shhtaerospaceindustrial.util.CoreUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +32,7 @@ public class insertCePingTypeRecord extends ExecuteListener implements ExecuteLi
             String queryCount = "SELECT count(id) as SL FROM BO_EU_MYD_CEPING_YB_CEITEMXX WHERE " +
                     "BINDID" +
                     " = '" + bindId + "'";
-            int sl = CoreUtil.objToInt(DBSql.getInt(queryCount, "SL"));
+            int sl = objToInt(DBSql.getInt(queryCount, "SL"));
             if (sl == 0) {
 
                 String queryResource = "select distinct t.cepingtype from BO_EU_MYD_CEPINGDOC t";
@@ -45,7 +43,7 @@ public class insertCePingTypeRecord extends ExecuteListener implements ExecuteLi
                     List<BO> items = new ArrayList<BO>();
                     for (int i = 0; i < resourceList.size(); i++) {
                         Map<String, Object> resourceTaskFpIdMap = resourceList.get(i);
-                        String cepingtype = CoreUtil.objToStr(resourceTaskFpIdMap.get("cepingtype"));//来源任务分配单ID
+                        String cepingtype = objToStr(resourceTaskFpIdMap.get("cepingtype"));//来源任务分配单ID
                         BO itemRecordData = new BO();
                         itemRecordData.set("CEPINGTYPE", cepingtype);
                         items.add(itemRecordData);
@@ -64,4 +62,10 @@ public class insertCePingTypeRecord extends ExecuteListener implements ExecuteLi
             e.printStackTrace();
         }
     }
+	public static String objToStr(Object obj) {
+		return obj == null ? "" : obj.toString();
+	}
+	public static int objToInt(Object obj) {
+		return obj == null ? 0 : Integer.parseInt(objToStr(obj));
+	}
 }

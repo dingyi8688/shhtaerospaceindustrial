@@ -10,8 +10,6 @@ import com.actionsoft.bpms.util.DBSql;
 import com.actionsoft.sdk.local.SDK;
 import com.actionsoft.sdk.local.api.BOAPI;
 import com.actionsoft.sdk.local.api.ProcessAPI;
-import com.awspaas.user.apps.shhtaerospaceindustrial.util.CoreUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,26 +24,26 @@ public class createUnitPsnTestBillProsses extends ValueListener {
         String bindid = param.getProcessInstance().getId();
 
         String queryDdy = "SELECT APPLYUNIT,YEARINFO,SEASONINFO FROM BO_EU_MYD_CEPING_UNIT_HEAD WHERE BINDID = '" + bindid + "'";
-        String APPLYUNIT = CoreUtil.objToStr(DBSql.getString(queryDdy, "APPLYUNIT"));
-        String YEARINFO = CoreUtil.objToStr(DBSql.getString(queryDdy, "YEARINFO"));
-        String SEASONINFO = CoreUtil.objToStr(DBSql.getString(queryDdy, "SEASONINFO"));
+        String APPLYUNIT = objToStr(DBSql.getString(queryDdy, "APPLYUNIT"));
+        String YEARINFO = objToStr(DBSql.getString(queryDdy, "YEARINFO"));
+        String SEASONINFO = objToStr(DBSql.getString(queryDdy, "SEASONINFO"));
 
 
         System.out.println("bindid::" + bindid);
         String querySql = "select ID,DEPTNAME,PSNNAME,PSNUSERID,CELLPHONE from " +
                 "BO_EU_MYD_CEPING_UNIT_PSN where " +
-                "bindid='" + bindid + "' and  ISSTARTCEPING='否'";
+                "bindid='" + bindid + "' and  ISSTARTCEPING='0'";
         List<Map<String, Object>> dataList = DBSql.query(querySql, new ColumnMapRowMapper());
         if (dataList != null && !dataList.isEmpty())
         {
             for (Map<String, Object> dataMap : dataList) {
 //				JSONObject orderItem = new JSONObject();
-                String ID = CoreUtil.objToStr(dataMap.get("ID"));
+                String ID = objToStr(dataMap.get("ID"));
 
-                String PSNNAME = CoreUtil.objToStr(dataMap.get("PSNNAME"));
-                String CELLPHONE = CoreUtil.objToStr(dataMap.get("CELLPHONE"));
-                String PSNUSERID = CoreUtil.objToStr(dataMap.get("PSNUSERID"));
-                String DEPTNAME = CoreUtil.objToStr(dataMap.get("DEPTNAME"));
+                String PSNNAME = objToStr(dataMap.get("PSNNAME"));
+                String CELLPHONE = objToStr(dataMap.get("CELLPHONE"));
+                String PSNUSERID = objToStr(dataMap.get("PSNUSERID"));
+                String DEPTNAME = objToStr(dataMap.get("DEPTNAME"));
 
                 if (PSNUSERID != null && !("").equals(PSNUSERID)) {
                     String prosuuid = "obj_244ab6ba9bb3472397e7386e76604921"; //个人测评流程定义ID
@@ -87,8 +85,8 @@ public class createUnitPsnTestBillProsses extends ValueListener {
                         List<BO> items = new ArrayList<BO>();
                         String itemboname = "BO_EU_MYD_CEPING_BODY";
                         for (Map<String, Object> itemdataMap : itemdataList) {
-                            String CEPINGTYPE = CoreUtil.objToStr(itemdataMap.get("CEPINGTYPE"));
-                            String CEPINGITEM = CoreUtil.objToStr(itemdataMap.get("CEPINGITEM"));
+                            String CEPINGTYPE = objToStr(itemdataMap.get("CEPINGTYPE"));
+                            String CEPINGITEM = objToStr(itemdataMap.get("CEPINGITEM"));
                             BO itemRecordData = new BO();
                             itemRecordData.set("CEPINGTYPE", CEPINGTYPE);
                             itemRecordData.set("CEPINGITEM", CEPINGITEM);
@@ -102,7 +100,7 @@ public class createUnitPsnTestBillProsses extends ValueListener {
                             System.out.println("创建数量：" + itemsnum);
 
                             if (actionflag > 0 && (itemsnum != null && itemsnum.length > 0)) {
-                                int updateflag = DBSql.update("UPDATE BO_EU_MYD_CEPING_UNIT_PSN SET ISSTARTCEPING = '是' " +
+                                int updateflag = DBSql.update("UPDATE BO_EU_MYD_CEPING_UNIT_PSN SET ISSTARTCEPING = '1' " +
                                         "WHERE ID = '" + ID + "'");
                                 System.out.println("更新操作的结果是：" + updateflag);
                             }
@@ -119,5 +117,8 @@ public class createUnitPsnTestBillProsses extends ValueListener {
 
         return "操作结束";
     }
+	public static String objToStr(Object obj) {
+		return obj == null ? "" : obj.toString();
+	}
 
 }

@@ -10,9 +10,6 @@ import com.actionsoft.bpms.bpmn.engine.listener.ExecuteListener;
 import com.actionsoft.bpms.bpmn.engine.listener.ExecuteListenerInterface;
 import com.actionsoft.bpms.commons.database.ColumnMapRowMapper;
 import com.actionsoft.bpms.util.DBSql;
-import com.actionsoft.sdk.local.SDK;
-import com.awspaas.user.apps.shhtaerospaceindustrial.util.CoreUtil;
-
 import java.util.List;
 import java.util.Map;
 
@@ -33,11 +30,11 @@ public class UpdateUnitTestPsnRecord extends ExecuteListener implements ExecuteL
             if (resourceTaskFpIdList != null && !resourceTaskFpIdList.isEmpty()) {
                 for (int i = 0; i < resourceTaskFpIdList.size(); i++) {
                     Map<String, Object> resourceTaskFpIdMap = resourceTaskFpIdList.get(i);
-                    String SOURCEPORJECTID = CoreUtil.objToStr(resourceTaskFpIdMap.get("SOURCEPORJECTID"));//来源任务分配单ID
-                    String ID = CoreUtil.objToStr(resourceTaskFpIdMap.get("ID"));
+                    String SOURCEPORJECTID = objToStr(resourceTaskFpIdMap.get("SOURCEPORJECTID"));//来源任务分配单ID
+                    String ID = objToStr(resourceTaskFpIdMap.get("ID"));
                     if(SOURCEPORJECTID!=null && (!("").equals(SOURCEPORJECTID))) {
                         String updatesql = "UPDATE BO_EU_MYD_CEPING_UNIT_PSN SET CEPINGRECORDID = '" + ID + "'," +
-                                "ISCLOSED='是' WHERE  ID = '" + SOURCEPORJECTID + "'";
+                                "ISCLOSED='1' WHERE  ID = '" + SOURCEPORJECTID + "'";
                         int updateflag = DBSql.update((updatesql));
 
                         System.out.println("更新操作的结果是：" + updateflag);
@@ -50,4 +47,7 @@ public class UpdateUnitTestPsnRecord extends ExecuteListener implements ExecuteL
             e.printStackTrace();
         }
     }
+	public static String objToStr(Object obj) {
+		return obj == null ? "" : obj.toString();
+	}
 }

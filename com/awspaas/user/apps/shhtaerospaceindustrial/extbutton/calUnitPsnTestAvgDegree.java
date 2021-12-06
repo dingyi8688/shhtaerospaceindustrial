@@ -7,8 +7,6 @@ import com.actionsoft.bpms.commons.database.ColumnMapRowMapper;
 import com.actionsoft.bpms.commons.mvc.view.ResponseObject;
 import com.actionsoft.bpms.util.DBSql;
 import com.actionsoft.sdk.local.SDK;
-import com.awspaas.user.apps.shhtaerospaceindustrial.util.CoreUtil;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,9 +27,9 @@ public class calUnitPsnTestAvgDegree extends ValueListener {
             for (int i = 0; i < ceitemlist.size(); i++) {
 //				JSONObject orderItem = new JSONObject();
                 BO ceitembo = ceitemlist.get(i);
-                String ID = CoreUtil.objToStr(ceitembo.get("ID"));
-                String CEPINGTYPE = CoreUtil.objToStr(ceitembo.get("CEPINGTYPE"));
-                String CEPINGITEM = CoreUtil.objToStr(ceitembo.get("CEPINGITEM"));
+                String ID = objToStr(ceitembo.get("ID"));
+                String CEPINGTYPE = objToStr(ceitembo.get("CEPINGTYPE"));
+                String CEPINGITEM = objToStr(ceitembo.get("CEPINGITEM"));
                 cpitemmap.put(CEPINGTYPE + CEPINGITEM, ID);
             }
         }
@@ -40,14 +38,14 @@ public class calUnitPsnTestAvgDegree extends ValueListener {
         String querySql = "select t.cepingtype,  t.cepingitem,t.cepingtype||t.cepingitem as itemkeyword," +
                 " round(sum(t.manyigudegree) / sum(t.manyigucount), 2) as itemavg " +
                 "  from VIEW_SHHT_MYDTESTFORPSN t   where t.sourceporjectid "
-                + "in (select id from BO_EU_MYD_CEPING_UNIT_PSN where bindid='" + bindid + "' and  ISSTARTCEPING='ÊÇ')" +
+                + "in (select id from BO_EU_MYD_CEPING_UNIT_PSN where bindid='" + bindid + "' and  ISSTARTCEPING='1')" +
                 " group by t.cepingtype, t.cepingitem";
         List<Map<String, Object>> dataList = DBSql.query(querySql, new ColumnMapRowMapper());
         if (dataList != null && !dataList.isEmpty()) {
             for (Map<String, Object> dataMap : dataList) {
 //				JSONObject orderItem = new JSONObject();
-                String itemkeyword = CoreUtil.objToStr(dataMap.get("itemkeyword"));
-                Object itemavgdegree = CoreUtil.objToStr(dataMap.get("itemavg"));
+                String itemkeyword = objToStr(dataMap.get("itemkeyword"));
+                Object itemavgdegree = objToStr(dataMap.get("itemavg"));
 
                 if (itemkeyword != null && !("").equals(itemkeyword)) {
                     if (cpitemmap.containsKey(itemkeyword)) {
@@ -67,5 +65,8 @@ public class calUnitPsnTestAvgDegree extends ValueListener {
 
         return "²Ù×÷½áÊø";
     }
+	public static String objToStr(Object obj) {
+		return obj == null ? "" : obj.toString();
+	}
 
 }
