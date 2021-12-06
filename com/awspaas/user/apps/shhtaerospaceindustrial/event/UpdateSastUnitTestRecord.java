@@ -37,13 +37,14 @@ public class UpdateSastUnitTestRecord extends ExecuteListener implements Execute
                     String ID = CoreUtil.objToStr(resourceTaskFpIdMap.get("ID"));
 
                     if(SOURCEPORJECTID!=null && (!("").equals(SOURCEPORJECTID))) {
-//                        if (SDK.getTaskAPI().isChoiceActionMenu(pec.getTaskInstance(), "确认")){
+                        if (SDK.getTaskAPI().isChoiceActionMenu(pec.getTaskInstance(), "确认"))
+                       {
                             String updatesql = "UPDATE BO_EU_MYD_CEPING_YB_UNITJB SET CEPINGRECORDID = '" + ID + "'," +
                                     "ISCLOSED='是' WHERE  ID = '" + SOURCEPORJECTID + "'";
                             int updateflag = DBSql.update((updatesql));
 
                             System.out.println("更新操作的结果是：" + updateflag);
-//                        }
+                        }
                     }
                 }
             }
