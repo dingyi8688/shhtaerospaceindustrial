@@ -112,9 +112,9 @@ public class GetLsUseCarTotalDataController {
                 String targetplace = CoreUtil.objToStr(dataMap.get("targetplace"));
                 String vehicletype = CoreUtil.objToStr(dataMap.get("vehicletype"));
 
-                double qrlc = CoreUtil.objToDouble(dataMap.get("qrlc"));
-                double USECARTIME = CoreUtil.objToDouble(dataMap.get("USECARTIME"));
-                double totalmoney = CoreUtil.objToDouble(dataMap.get("totalmoney"));
+                double qrlc = objToDouble(dataMap.get("qrlc"));
+                double USECARTIME = objToDouble(dataMap.get("USECARTIME"));
+                double totalmoney = objToDouble(dataMap.get("totalmoney"));
 
                 orderItem.put("userName", applyusername);
                 orderItem.put("usecarDate", usecardate);
@@ -139,5 +139,8 @@ public class GetLsUseCarTotalDataController {
         }
 
         return returnData.toString();
+    }
+    public static Double objToDouble(Object obj) {
+        return obj == null ? 0: Double.parseDouble(CoreUtil.objToStr(obj));
     }
 }
