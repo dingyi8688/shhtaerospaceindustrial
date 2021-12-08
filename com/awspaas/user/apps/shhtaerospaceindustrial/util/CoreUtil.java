@@ -68,6 +68,10 @@ public class CoreUtil {
         return obj == null ? 0 : Integer.parseInt(objToStr(obj));
     }
 
+    public static Double objToDouble(Object obj) {
+        return obj == null ? 0: Double.parseDouble(objToStr(obj));
+    }
+
     /**
      * @return String 返回类型 
      * @Title: getTheFirstThreeDay 
