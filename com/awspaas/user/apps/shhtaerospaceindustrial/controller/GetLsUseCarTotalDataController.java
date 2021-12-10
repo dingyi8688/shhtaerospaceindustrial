@@ -19,6 +19,10 @@ import java.util.Map;
  */
 @Controller
 public class GetLsUseCarTotalDataController {
+    public static Double objToDouble(Object obj) {
+        return obj == null ? 0 : Double.parseDouble(CoreUtil.objToStr(obj));
+    }
+
     /**
      * @Description 获取指定时段的部门用用车记录-> 入参：sid|开始日期|startdate|结束日期|enddate
      * 出参:部门名称,任务数量、状态（0：成功|1：失败）、信息提示（失败时携带）
@@ -140,7 +144,126 @@ public class GetLsUseCarTotalDataController {
 
         return returnData.toString();
     }
-    public static Double objToDouble(Object obj) {
-        return obj == null ? 0: Double.parseDouble(CoreUtil.objToStr(obj));
+
+    /**
+     * @Description 获取指定时段的部门用用车记录-> 入参：sid|开始日期|startdate|结束日期|enddate
+     * 出参:部门名称,任务数量、状态（0：成功|1：失败）、信息提示（失败时携带）
+     * @date 2021年12月08日
+     */
+    @Mapping("com.awspaas.user.apps.shhtaerospaceindustrial_getDriverTotalData")
+    public String getDriverTotalData(UserContext uc, String sid, String startdate, String enddate) {
+        JSONObject returnData = new JSONObject();
+
+        try {
+            String userId = uc.getUID();
+
+
+            String querySql = "select t.sjxm,count(t.id) as missioncount from VIEW_YQBZ_LSCARMISSIONINFO t " +
+                    "where t.usecardate between '" + startdate + "' and '" + enddate + "' group by t.sjxm ";
+
+            List<Map<String, Object>> dataList = DBSql.query(querySql, new ColumnMapRowMapper());
+
+            if (dataList == null || dataList.isEmpty()) {
+                returnData.put("status", "0");
+                JSONArray weekDataNull = new JSONArray();
+                returnData.put("weekData", weekDataNull);
+                returnData.put("message", "查询的时段内没有临时用车任务记录");
+                return returnData.toString();
+            }
+
+
+            JSONArray driverArr = new JSONArray();// 部门数组
+            JSONArray miscountArr = new JSONArray();// 任务数量数组
+
+            String portalUrl = SDK.getPortalAPI().getPortalUrl();
+
+            for (Map<String, Object> dataMap : dataList) {
+//				JSONObject deptItem = new JSONObject();
+                String sjxm = CoreUtil.objToStr(dataMap.get("sjxm"));
+                String missioncount = CoreUtil.objToStr(dataMap.get("missioncount"));
+
+                driverArr.add(sjxm);
+                miscountArr.add(missioncount);
+
+            }
+
+
+            // 成功
+            returnData.put("status", "0");
+            returnData.put("deptList", driverArr);
+            returnData.put("missioncountList", miscountArr);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            returnData.put("status", "1");
+            returnData.put("message", e.getMessage());
+        }
+
+        return returnData.toString();
+    }
+
+    /**
+     * @Description 获取指定时段的部门用用车记录-> 入参：sid|开始日期|startdate|结束日期|enddate,部门名称|orgname
+     * 出参:用车人,用车日期,上下车地点,车辆类型,用车时长,用车里程,用车费用、状态（0：成功|1：失败）、信息提示（失败时携带）
+     * @date 2021年12月08日
+     */
+    @Mapping("com.awspaas.user.apps.shhtaerospaceindustrial_getDriverDetialData")
+
+    public String getDriverDetialData(UserContext uc, String sid, String startdate, String enddate, String sjxm) {
+        JSONObject returnData = new JSONObject();
+
+        try {
+            String userId = uc.getUID();
+
+
+            String querySql = "select t.sjxm,t.usecardate,t.boardingplace,t.targetplace,t.vehicletype,t.qrlc,t.USECARTIME,t.totalmoney from VIEW_YQBZ_LSCARMISSIONINFO t" +
+                    "where t.sjxm='" + sjxm + "' and  t.usecardate between '" + startdate + "' and '" + enddate + "' ";
+
+            List<Map<String, Object>> dataList = DBSql.query(querySql, new ColumnMapRowMapper());
+            if (dataList == null || dataList.isEmpty()) {
+                returnData.put("status", "0");
+                JSONArray deptWeekNull = new JSONArray();
+                returnData.put("deptWeekList", deptWeekNull);
+                returnData.put("message", "时段内未查询到临时用车任务记录");
+                return returnData.toString();
+            }
+            JSONArray driverDetialArr = new JSONArray();
+
+            for (Map<String, Object> dataMap : dataList) {
+                JSONObject orderItem = new JSONObject();
+
+                String userName = CoreUtil.objToStr(dataMap.get("sjxm"));
+                String usecardate = CoreUtil.objToStr(dataMap.get("usecardate"));
+                String boardingplace = CoreUtil.objToStr(dataMap.get("boardingplace"));
+                String targetplace = CoreUtil.objToStr(dataMap.get("targetplace"));
+                String vehicletype = CoreUtil.objToStr(dataMap.get("vehicletype"));
+
+                double qrlc = objToDouble(dataMap.get("qrlc"));
+                double USECARTIME = objToDouble(dataMap.get("USECARTIME"));
+                double totalmoney = objToDouble(dataMap.get("totalmoney"));
+
+                orderItem.put("userName", userName);
+                orderItem.put("usecarDate", usecardate);
+                orderItem.put("boardingPlace", boardingplace);
+                orderItem.put("targetPlace", targetplace);
+                orderItem.put("vehicleType", vehicletype);
+
+
+                orderItem.put("qrlc", qrlc);
+                orderItem.put("usecartime", USECARTIME);
+                orderItem.put("totalmoney", totalmoney);
+                driverDetialArr.add(orderItem);
+            }
+
+            // 成功
+            returnData.put("status", "0");
+            returnData.put("deptdataist", driverDetialArr);
+        } catch (Exception e) {
+            e.printStackTrace();
+            returnData.put("status", "1");
+            returnData.put("message", e.getMessage());
+        }
+
+        return returnData.toString();
     }
 }
